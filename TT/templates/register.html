@@ -1,0 +1,16 @@
+{% extends "layouts/basic.html" %}
+
+{% block title %} Register on SimpleTT {% endblock %}
+
+{% block content %}
+
+    <form enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+        {{ user_form.as_p }}
+        {{ user_tt.as_p }}
+        <input type="submit" name="" value="Register">
+    </form>
+
+
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "layouts/basic.html" %}
+
+{% block title %} Welcome on SimpleTT {% endblock %}
+
+{% block content %}
+    <form action="{% url 'login' %}" method="post">
+        {% csrf_token %}
+        <div>
+            <label for="username" class="form-label">Username:</label>
+            <input type="text" id="username" name="username" class="form-control">
+        </div>
+        <div>
+            <label for="password" class="form-label">Password:</label>
+            <input type="password" id="password" name="password" class="form-control">
+        </div>
+        <div >
+            <button type="submit">Log In</button>
+        </div>
+    </form>
+
+
+{% endblock %}
