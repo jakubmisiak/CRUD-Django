@@ -1,0 +1,15 @@
+{% extends "layouts/basic.html" %}
+
+{% block title %} Add post {% endblock %}
+
+{% block content %}
+
+    <form enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+        {{post_form.as_p}}
+        <input type="submit" name="" value="Add post">
+    </form>
+
+
+
+{% endblock %}

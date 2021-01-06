@@ -1,10 +1,12 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, redirect
 
-from TT.forms import UserForm, UserTTForm
-
+from TT.forms import UserForm, UserTTForm, PostForm
+from TT.models.post import Post
+from TT.models.user_tt import UserTT
 
 
 def user_login(request):
@@ -45,5 +47,35 @@ def register(request):
 
 @login_required
 def home(request):
-    succes = "Succes. U logged in"
-    return render(request, 'log/home.html', {'succes':succes})
+    posts = Post.objects.all()
+    posts_paginator = Paginator(posts,5)
+    page_number=request.GET.get('page')
+    page = posts_paginator.get_page(page_number)
+
+    context = {
+        'page': page
+    }
+
+
+    return render(request, 'log/home.html', context)
+
+
+
+
+
+@login_required
+def addPost(request):
+    current_user = UserTT.objects.get(user=request.user)
+    if request.method == "POST":
+        post_form = PostForm(data=request.POST)
+        if post_form.is_valid():
+            post = post_form.save()
+
+            if 'post_pic' in request.FILES:
+                post.profile_pic = request.FILES['post_pic']
+            post.userTT=current_user
+            post.save()
+    else:
+        post_form = PostForm()
+
+    return render(request, 'log/addPost.html', {'post_form':post_form})

@@ -3,7 +3,25 @@
 {% block title %} SimpleTT {% endblock %}
 
 {% block content %}
-
-    {{ succes }}
-
+    {% for post in page.object_list %}
+        <p>
+            Autor posta {{ post.userTT.user}}
+        </p>
+        <br>
+        <p>
+        {{post.content}}
+        </p>
+        <br>
+        ---------------------------------------
+        <br>
+    {% endfor %}
+    <div class="page-links">
+        {% if page.has_previous %}
+        <a href="{% url 'home' %}?page={{ page.previous_page_number }}">Previous Page</a>
+        {% endif %}
+        {% if page.has_next %}
+        <a href="{% url 'home' %}?page={{ page.next_page_number }}">Next Page</a>
+        {% endif %}
+    </div>
 {% endblock %}
+
