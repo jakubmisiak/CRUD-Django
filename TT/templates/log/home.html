@@ -2,26 +2,47 @@
 
 {% block title %} SimpleTT {% endblock %}
 
+{% block navbar %}
+
+{% endblock %}
+
+
 {% block content %}
-    {% for post in page.object_list %}
-        <p>
-            Autor posta {{ post.userTT.user}}
-        </p>
-        <br>
-        <p>
-        {{post.content}}
-        </p>
-        <br>
-        ---------------------------------------
-        <br>
-    {% endfor %}
-    <div class="page-links">
-        {% if page.has_previous %}
-        <a href="{% url 'home' %}?page={{ page.previous_page_number }}">Previous Page</a>
-        {% endif %}
-        {% if page.has_next %}
-        <a href="{% url 'home' %}?page={{ page.next_page_number }}">Next Page</a>
-        {% endif %}
+    <div class="row">
+        <div class="col-3 mx-auto">
+            <div class="text-center">
+                <div class="text-center">
+                    <a href="{% url 'logout' %}"> logout</a>
+                    <form enctype="multipart/form-data" method="post">
+                        {% csrf_token %}
+                        {{form.as_p}}
+                        <input type="submit" name="" value="Add post">
+                    </form>
+                </div>
+                {% for post in page.object_list %}
+                    <div class="p-3 mb-2 bg-light text-dark">
+                        <p>
+                            Autor posta {{ post.userTT.user}}
+                        </p>
+                        <br>
+                        <p>
+                        {{post.content}}
+                        </p>
+                        <p>
+                            <a href="/post/{{ post.id }}">Go to post</a>
+                        </p>
+                    </div>
+                {% endfor %}
+                <div class="page-links">
+                    {% if page.has_previous %}
+                    <a href="{% url 'home' %}?page={{ page.previous_page_number }}" class="text-dark">Previous Page</a>
+                    {% endif %}
+                    {% if page.has_next %}
+                    <a href="{% url 'home' %}?page={{ page.next_page_number }}" class="text-dark">Next Page</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 

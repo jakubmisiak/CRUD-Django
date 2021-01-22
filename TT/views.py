@@ -1,9 +1,8 @@
-from django.contrib.auth import authenticate, login
+from apt import auth
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
-
 from TT.forms import UserForm, UserTTForm, PostForm
 from TT.models.post import Post
 from TT.models.user_tt import UserTT
@@ -47,13 +46,26 @@ def register(request):
 
 @login_required
 def home(request):
-    posts = Post.objects.all()
+    current_user = UserTT.objects.get(user=request.user)
+    posts = Post.objects.all().order_by('-date')
     posts_paginator = Paginator(posts,5)
     page_number=request.GET.get('page')
     page = posts_paginator.get_page(page_number)
+    form = PostForm()
+
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save()
+            #if 'post_pic' in request.FILES:
+                #post.profile_pic = request.FILES['post_pic']
+            post.userTT = current_user
+            post.save()
+        return redirect('home')
 
     context = {
-        'page': page
+        'page' : page,
+        'form' : form
     }
 
 
@@ -61,21 +73,20 @@ def home(request):
 
 
 
-
-
 @login_required
-def addPost(request):
-    current_user = UserTT.objects.get(user=request.user)
-    if request.method == "POST":
-        post_form = PostForm(data=request.POST)
-        if post_form.is_valid():
-            post = post_form.save()
+def post(request, id):
+    post = Post.objects.get(id=id)
+    if request.method == 'POST':
+        post.delete()
+        return redirect('home')
 
-            if 'post_pic' in request.FILES:
-                post.profile_pic = request.FILES['post_pic']
-            post.userTT=current_user
-            post.save()
-    else:
-        post_form = PostForm()
+    context = {
+        'post': post
+    }
 
-    return render(request, 'log/addPost.html', {'post_form':post_form})
+    return render(request, 'log/post.html', context)
+
+@login_required()
+def user_logout(request):
+    logout(request)
+    return redirect('login')

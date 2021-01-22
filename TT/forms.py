@@ -20,6 +20,10 @@ class UserTTForm(forms.ModelForm):
 
 
 class PostForm(forms.ModelForm):
+    content = forms.CharField(widget=forms.Textarea(attrs={'class':'textinput', 'cols':50, 'rows': 6,'style':'resize:none;' }), label='')
     class Meta():
         model = Post
         fields = ('content', 'post_pic')
+        labels = {
+            'post_pic': 'Add photo'
+        }
