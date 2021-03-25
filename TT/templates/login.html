@@ -3,20 +3,23 @@
 {% block title %} Welcome on SimpleTT {% endblock %}
 
 {% block content %}
-    <form action="{% url 'login' %}" method="post">
-        {% csrf_token %}
-        <div>
-            <label for="username" class="form-label">Username:</label>
-            <input type="text" id="username" name="username" class="form-control">
-        </div>
-        <div>
-            <label for="password" class="form-label">Password:</label>
-            <input type="password" id="password" name="password" class="form-control">
-        </div>
-        <div >
-            <button type="submit">Log In</button>
-        </div>
-    </form>
+    <div class="login-back">
+        <form action="{% url 'login' %}" method="post">
+            {% csrf_token %}
+            <h2 class="welcome">Welcome on silmple TT</h2>
+            <div class="log">
+                <label for="username" class="form-label">Username:</label>
+                <input type="text" id="username" name="username" class="form-control">
+            </div>
+            <div>
+                <label for="password" class="form-label"> Password:&nbsp;</label>
+                <input type="password" id="password" name="password" class="form-control">
+            </div>
+            <div >
+                <button type="submit" class="bottom">Log In</button>
+            </div>
+        </form>
+    </div>
 
 
 {% endblock %}

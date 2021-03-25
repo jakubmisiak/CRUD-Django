@@ -8,7 +8,7 @@
 
 
 {% block content %}
-    <div class="row">
+    <div class="feed">
         <div class="col-3 mx-auto">
             <div class="text-center">
                 <div class="text-center">
@@ -16,30 +16,60 @@
                     <form enctype="multipart/form-data" method="post">
                         {% csrf_token %}
                         {{form.as_p}}
-                        <input type="submit" name="" value="Add post">
+                        <input type="submit" name="" value="Add post" class="bottom">
                     </form>
                 </div>
-                {% for post in page.object_list %}
-                    <div class="p-3 mb-2 bg-light text-dark">
-                        <p>
-                            Autor posta {{ post.userTT.user}}
-                        </p>
-                        <br>
-                        <p>
-                        {{post.content}}
-                        </p>
-                        <p>
-                            <a href="/post/{{ post.id }}">Go to post</a>
-                        </p>
-                    </div>
-                {% endfor %}
+                <section class="feed">
+                    <ul class="timeline">
+                        {% for post in page.object_list %}
+                            <li>
+                                <div class="profile-pic">
+                                    {% if post.userTT.profile_pic%}
+                                        <img src="{{ MEDIA_URL }}{{ post.userTT.profile_pic }}">
+                                    {% else %}
+                                        <img src="{{ MEDIA_URL }}/profile_pics/XD.png">
+                                    {% endif %}
+                                </div>
+                                <div class="name">
+                                </div>
+                                <div class="content">
+                                    <div class="text">
+
+                                    </div>
+                                    {% if post.post_pic%}
+                                        <div class="post-pic">
+                                            <img src="{{ MEDIA_URL }}{{ post.post_pic }}">
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                    <p>
+                                        Autor posta {{ post.userTT.user}}
+                                    </p>
+                                    <p>
+                                        <a href="/user/{{ post.userTT.id }}">{{ post.userTT.user}}</a>
+                                    </p>
+                                    <br>
+                                    <p>
+                                    {{post.content}}
+                                    </p>
+                                    <p>
+                                        <a href="/post/{{ post.id }}">Go to post</a>
+                                    </p>
+                            </li>
+                        {% endfor %}
+                    </ul>    
+                </section>
                 <div class="page-links">
-                    {% if page.has_previous %}
-                    <a href="{% url 'home' %}?page={{ page.previous_page_number }}" class="text-dark">Previous Page</a>
-                    {% endif %}
-                    {% if page.has_next %}
-                    <a href="{% url 'home' %}?page={{ page.next_page_number }}" class="text-dark">Next Page</a>
-                    {% endif %}
+                    <div class="link">
+                        {% if page.has_previous %}
+                        <a href="{% url 'home' %}?page={{ page.previous_page_number }}" class="text-dark">Previous Page</a>
+                        {% endif %}
+                    </div>
+                    <div class="link">
+                        {% if page.has_next %}
+                        <a href="{% url 'home' %}?page={{ page.next_page_number }}" class="text-dark">Next Page</a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>

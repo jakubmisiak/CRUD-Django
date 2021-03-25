@@ -3,7 +3,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
-from TT.forms import UserForm, UserTTForm, PostForm
+from TT.forms import UserForm, UserTTForm, PostForm, CommentForm
+from TT.models.comment import Comment
 from TT.models.post import Post
 from TT.models.user_tt import UserTT
 
@@ -37,6 +38,7 @@ def register(request):
                 new_acc.profile_pic = request.FILES['profile_pic']
 
             new_acc.save()
+            return redirect('login')
     else:
         user_form = UserForm()
         user_tt = UserTTForm()
@@ -57,8 +59,6 @@ def home(request):
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save()
-            #if 'post_pic' in request.FILES:
-                #post.profile_pic = request.FILES['post_pic']
             post.userTT = current_user
             post.save()
         return redirect('home')
@@ -75,18 +75,75 @@ def home(request):
 
 @login_required
 def post(request, id):
+    current_user = UserTT.objects.get(user=request.user)
     post = Post.objects.get(id=id)
+    comments =  Comment.objects.all().filter(post=post).order_by('-id')
+    for i in comments:
+        print(i.content)
+        print("---------")
+        print(i.user)
+    form = CommentForm()
     if request.method == 'POST':
-        post.delete()
-        return redirect('home')
-
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save()
+            comment.post = post
+            comment.user = current_user
+            comment.save()
+        return redirect('post', id=post.id)
     context = {
-        'post': post
+        'post': post,
+        'form': form,
+        'comments': comments
     }
 
     return render(request, 'log/post.html', context)
+
+@login_required
+def user_profile(request, id):
+    user = UserTT.objects.get(id=id)
+    post = Post.objects.all().filter(userTT=user)
+    print(user.post_count())
+    context = {
+        'user':user,
+        'post': post,
+        'post_count': user.post_count(),
+    }
+    return render(request, 'log/userprofile.html', context)
+
+@login_required
+def update_post(request, id):
+    post = Post.objects.get(id=id)
+    current_user = UserTT.objects.get(user=request.user)
+    form = PostForm(instance=post)
+
+    if current_user!=post.userTT:
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            post = form.save()
+            post.save()
+        return redirect('post', id=post.id)
+
+    context = {'form':form}
+    return render(request, 'log/updatepost.html', context)
+
+
+@login_required()
+def delete_view(request, id):
+    post = Post.objects.get(id=id)
+    current_user = UserTT.objects.get(user=request.user)
+    if post.userTT == current_user:
+        post.delete()
+        return redirect('home')
+    else:
+        return redirect('home')
+
 
 @login_required()
 def user_logout(request):
     logout(request)
     return redirect('login')
+

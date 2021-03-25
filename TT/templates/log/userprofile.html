@@ -1,0 +1,15 @@
+{% extends "layouts/basic.html" %}
+
+{% block title %} XD {% endblock %}
+
+{% block content %}
+    <div>{{ user.user.username}}</div>
+    <br>
+    <div>{{post_count}}</div>
+    <br>
+    {%for i in post%}
+        {{i.content}}
+        <br>
+    {%endfor%}
+
+{% endblock %}

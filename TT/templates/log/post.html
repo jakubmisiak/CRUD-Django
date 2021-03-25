@@ -4,19 +4,25 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-3 mx-auto">
-            <div class="text-center">
-                {{ post.content }}
-                <br>
-                {{ post.userTT.user }}
-                <br>
-                <form enctype="multipart/form-data" method="post">
-                        {% csrf_token %}
-                        {{form.as_p}}
-                        <input type="submit" name="" value="Delete">
+        <div class="text-center">
+            {{ post.content }}
+            <br>
+            {{ post.userTT.user }}
+            <br>
+            <form enctype="multipart/form-data" method="post">
+                    {% csrf_token %}
+                    {{form.as_p}}
+                    <input type="submit" name="" value="Add coment">
                 </form>
-            </div>
         </div>
+        <div>            
+            <ul class="timeline">
+                {% for comment in comments %}
+                    {{comment.content}}
+
+                {% endfor %}
+            </ul> 
+        </div>               
     </div>
 
 {% endblock %}
